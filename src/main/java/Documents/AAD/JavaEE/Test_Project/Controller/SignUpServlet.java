@@ -20,43 +20,48 @@ public class SignUpServlet extends HttpServlet {
     private DataSource dataSource;
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
         String role = request.getParameter("role");
+        String fullName = request.getParameter("fullname"); // ✅ match with JSP field
 
-        if (username == null || password == null || confirmPassword == null || role == null ||
-                username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty()) {
-            response.sendRedirect("signup.jsp?error=true");
+        // Basic validations
+        if (username == null || password == null || confirmPassword == null || role == null || fullName == null ||
+                username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty() || fullName.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
+
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            response.sendRedirect("signup.jsp?error=true");
+            response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
             return;
         }
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "INSERT INTO users (username, password, role) VALUES (?, ?, ?)")) {
+             PreparedStatement stmt = connection.prepareStatement(
+                     "INSERT INTO users (username, password, role, full_name) VALUES (?, ?, ?, ?)")) {
 
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            preparedStatement.setString(3, role);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            stmt.setString(3, role);
+            stmt.setString(4, fullName);
 
-            int rowsAffected = preparedStatement.executeUpdate();
+            int rows = stmt.executeUpdate();
 
-            if (rowsAffected > 0) {
-                response.sendRedirect("signin.jsp?success=true");
+            if (rows > 0) {
+                response.sendRedirect(request.getContextPath() + "/View/signin.jsp?success=true"); // ✅ redirect to login
             } else {
-                response.sendRedirect("signup.jsp?error=true");
+                response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("signup.jsp?error=true");
+            response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
         }
     }
 }

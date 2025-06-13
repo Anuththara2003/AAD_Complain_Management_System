@@ -96,7 +96,7 @@
     </form>
 
     <!-- Sign Up button goes outside the form to avoid double submit -->
-    <form action="signup.jsp" method="get">
+    <form action="View/signup.jsp" method="get">
         <button type="submit" class="btn btn-signup">Sign Up</button>
     </form>
 </div>
