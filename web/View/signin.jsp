@@ -89,7 +89,7 @@
         }
     %>
     <p>Welcome to the Complaint Management System</p>
-    <form action="signin" method="post">
+    <form action="${pageContext.request.contextPath}/signin" method="post">
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit" class="btn btn-login">Login</button>

@@ -1,6 +1,7 @@
 package Documents.AAD.JavaEE.Test_Project.Controller;
 
 
+import Documents.AAD.JavaEE.Test_Project.Dao.UserDao;
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,16 +18,13 @@ public class SignInServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
 
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?")) {
+        try {
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
 
-            stmt.setString(1, username);
-            stmt.setString(2, password);
+            ResultSet rs = new UserDao(this.dataSource).signin(username, password);
 
-            ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 String role = rs.getString("role");
@@ -36,19 +34,25 @@ public class SignInServlet extends HttpServlet {
                 session.setAttribute("role", role);
 
                 if ("Admin".equalsIgnoreCase(role)) {
-                    response.sendRedirect("adminDashboard.jsp");
+//                    response.sendRedirect("adminDashboard.jsp");
+                    request.getRequestDispatcher("View/AdminDashBoard.jsp?success=true").forward(request,response);
                 } else if ("Employee".equalsIgnoreCase(role)) {
-                    response.sendRedirect("employeeDashboard.jsp");
+//                    response.sendRedirect("employeeDashboard.jsp");
+                    request.getRequestDispatcher("View/EmployeeDashBoard.jsp?success=true").forward(request,response);
                 } else {
-                    response.sendRedirect("signin.jsp?error=true");
+
+//                    response.sendRedirect("signin.jsp?error=true");
+                    request.getRequestDispatcher("View/signin.jsp?success=true").forward(request,response);
                 }
             } else {
-                response.sendRedirect("signin.jsp?error=true");
+//                response.sendRedirect("signin.jsp?error=true");
+                request.getRequestDispatcher("View/signin.jsp?success=true").forward(request,response);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("signin.jsp?error=true");
+//            response.sendRedirect("signin.jsp?error=true");
+            request.getRequestDispatcher("View/signin.jsp?success=true").forward(request,response);
         }
     }
 }

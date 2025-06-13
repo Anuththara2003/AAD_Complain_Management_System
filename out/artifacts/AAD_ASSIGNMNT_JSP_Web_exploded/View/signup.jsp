@@ -100,7 +100,7 @@
     <h1>Create Account</h1>
     <p>Please fill in the details to sign up</p>
 
-    <form action="<%= request.getContextPath() %>/signup" method="post">
+    <form action="${pageContext.request.contextPath}/signup" method="post">
         <input type="text" name="username" placeholder="Username" required>
         <input type="text" name="fullname" placeholder="Fullname" required>
         <input type="password" name="password" placeholder="Password" required>

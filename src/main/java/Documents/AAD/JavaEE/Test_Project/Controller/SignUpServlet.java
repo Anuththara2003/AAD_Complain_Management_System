@@ -1,5 +1,7 @@
 package Documents.AAD.JavaEE.Test_Project.Controller;
 
+import Documents.AAD.JavaEE.Test_Project.Dao.UserDao;
+import Documents.AAD.JavaEE.Test_Project.Model.UserModel;
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -22,46 +24,33 @@ public class SignUpServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            String confirmPassword = request.getParameter("confirmPassword");
+            String role = request.getParameter("role");
+            String fullName = request.getParameter("fullname");
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirmPassword");
-        String role = request.getParameter("role");
-        String fullName = request.getParameter("fullname"); // ✅ match with JSP field
+            UserModel userModel = new UserModel();
+            userModel.setUsername(username);
+            userModel.setPassword(password);
+            userModel.setRole(role);
+            userModel.setFullName(fullName);
 
-        // Basic validations
-        if (username == null || password == null || confirmPassword == null || role == null || fullName == null ||
-                username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty() || fullName.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
+            int result = new UserDao(this.dataSource).signup(userModel);
 
-            return;
-        }
 
-        if (!password.equals(confirmPassword)) {
-            response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
-            return;
-        }
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(
-                     "INSERT INTO users (username, password, role, full_name) VALUES (?, ?, ?, ?)")) {
-
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.setString(3, role);
-            stmt.setString(4, fullName);
-
-            int rows = stmt.executeUpdate();
-
-            if (rows > 0) {
-                response.sendRedirect(request.getContextPath() + "/View/signin.jsp?success=true"); // ✅ redirect to login
+            if (result > 0) {
+//            response.sendRedirect(request.getContextPath() + "/View/signin.jsp?success=true");
+                request.getRequestDispatcher("View/signin.jsp?success=true").forward(request, response);
             } else {
-                response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
+//            response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
+                request.getRequestDispatcher("View/signup.jsp?success=true").forward(request, response);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
+//            response.sendRedirect(request.getContextPath() + "/View/signup.jsp?success=true");
+            request.getRequestDispatcher("View/signup.jsp?success=true").forward(request, response);
         }
     }
 }
