@@ -28,10 +28,14 @@ public class SignInServlet extends HttpServlet {
 
             if (rs.next()) {
                 String role = rs.getString("role");
+                String name = rs.getString("full_name");
+                String user_id = rs.getString("user_id");
 
                 HttpSession session = request.getSession();
                 session.setAttribute("username", username);
                 session.setAttribute("role", role);
+                session.setAttribute("full_name", name);
+                session.setAttribute("user_id", user_id);
 
                 if ("Admin".equalsIgnoreCase(role)) {
 //                    response.sendRedirect("adminDashboard.jsp");

@@ -1,3 +1,5 @@
+<%@ page import="Documents.AAD.JavaEE.Test_Project.Model.EmployeeModel" %>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -429,6 +431,7 @@
             }
         }
     </style>
+
 </head>
 <body>
 <div class="floating-shapes">
@@ -439,14 +442,33 @@
 
 <div class="container">
     <div class="header-section">
+        <div class="header">
+            <div class="user-info">
+                Welcome, <%= session.getAttribute("full_name") != null ? session.getAttribute("full_name") : "Employee" %>
+            </div>
+            <div class="user-info">
+                User ID, <%= session.getAttribute("user_id") != null ? session.getAttribute("user_id") : "Employee" %>
+            </div>
+            <h1>🏛 Municipal Complaint Management</h1>
+            <p>Employee Dashboard - Submit and Track Your Complaints</p>
+        </div>
         <h2>User Dashboard - Complaint Management</h2>
         <button class="logout-btn" onclick="logout()">
             🚪 Logout
         </button>
     </div>
 
+    <!-- Success/Failure Message -->
+    <% String message = (String) request.getAttribute("message"); %>
+    <% if (message != null) { %>
+    <div style="padding: 10px; margin-bottom: 20px; background: <%= message.contains("successfully") ? "#d4edda" : "#f8d7da" %>; color: <%= message.contains("successfully") ? "#155724" : "#721c24" %>; border-radius: 5px;">
+        <%= message %>
+    </div>
+    <% } %>
+
     <div class="form-container">
-        <form method="post" action="complaintHandler">
+        <form method="post" action="employee" id="complaintForm">
+            <input type="hidden" name="complaint_id" id="complaint_id" value="">
             <label for="title">Complaint Title:</label>
             <input type="text" id="title" name="title" required placeholder="Enter your complaint title...">
 
@@ -455,9 +477,9 @@
 
             <div class="buttons">
                 <button type="submit" name="action" value="add">➕ Add Complaint</button>
-                <button type="submit" name="action" value="update">🔄 Update Complaint</button>
-                <button type="submit" name="action" value="delete">🗑️ Delete Complaint</button>
-                <button type="reset">🧹 Clear Form</button>
+                <button type="submit" name="action" value="update" id="updateBtn" disabled>🔄 Update Complaint</button>
+                <button type="submit" name="action" value="delete" id="deleteBtn" disabled>🗑️ Delete Complaint</button>
+                <button type="reset" onclick="resetForm()">🧹 Clear Form</button>
             </div>
         </form>
     </div>
@@ -474,37 +496,79 @@
                 <th>Status</th>
                 <th>Created</th>
                 <th>Updated</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td colspan="7" class="no-data">
-                    <div class="loading-animation"></div>
-                    No complaints found. Add your first complaint using the form above!
+            <%
+                List<EmployeeModel> complaintList = (List<EmployeeModel>) request.getAttribute("complaintList");
+                if (complaintList != null && !complaintList.isEmpty()) {
+                    for (EmployeeModel complaint : complaintList) {
+            %>
+            <tr onclick="selectComplaint('<%= complaint.getComplaint_id() %>', '<%= complaint.getTitle() %>', '<%= complaint.getDescription() %>')">
+                <td><%= complaint.getComplaint_id() %></td>
+                <td><%= complaint.getUser_id() %></td>
+                <td><%= complaint.getTitle() %></td>
+                <td><%= complaint.getDescription() %></td>
+                <td><%= complaint.getStatus() != null ? complaint.getStatus() : "Pending" %></td>
+                <td><%= complaint.getCreated_at() != null ? complaint.getCreated_at() : "--" %></td>
+                <td><%= complaint.getUpdated_at() != null ? complaint.getUpdated_at() : "--" %></td>
+                <td>
+                    <button onclick="selectComplaint('<%= complaint.getComplaint_id() %>', '<%= complaint.getTitle() %>', '<%= complaint.getDescription() %>')">Select</button>
                 </td>
             </tr>
-            <!-- JSP loop for complaints would go here -->
+            <%
+                }
+            } else {
+            %>
+            <tr>
+                <td colspan="8" class="no-data">No complaints found.</td>
+            </tr>
+            <%
+                }
+            %>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // Add some interactive animations
+    function selectComplaint(id, title, description) {
+        document.getElementById('complaint_id').value = id;
+        document.getElementById('title').value = title;
+        document.getElementById('description').value = description;
+        document.getElementById('updateBtn').disabled = false;
+        document.getElementById('deleteBtn').disabled = false;
+    }
+
+    function resetForm() {
+        document.getElementById('complaintForm').reset();
+        document.getElementById('complaint_id').value = '';
+        document.getElementById('updateBtn').disabled = true;
+        document.getElementById('deleteBtn').disabled = true;
+    }
+
+    function logout() {
+        if (confirm('Are you sure you want to logout? 🤔')) {
+            document.body.style.transition = 'opacity 0.5s ease-out';
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                window.location.href = 'logout';
+            }, 500);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Animate form inputs on focus
         const inputs = document.querySelectorAll('input, textarea');
         inputs.forEach(input => {
             input.addEventListener('focus', function() {
                 this.style.transform = 'scale(1.02)';
             });
-
             input.addEventListener('blur', function() {
                 this.style.transform = 'scale(1)';
             });
         });
 
-        // Add ripple effect to buttons
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => {
             button.addEventListener('click', function(e) {
@@ -515,52 +579,30 @@
                 const y = e.clientY - rect.top - size / 2;
 
                 ripple.style.cssText = `
-                        position: absolute;
-                        width: ${size}px;
-                        height: ${size}px;
-                        left: ${x}px;
-                        top: ${y}px;
-                        background: rgba(255, 255, 255, 0.6);
-                        border-radius: 50%;
-                        transform: scale(0);
-                        animation: ripple 0.6s linear;
-                        pointer-events: none;
-                    `;
-
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    background: rgba(255, 255, 255, 0.6);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
                 this.appendChild(ripple);
-
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
+                setTimeout(() => ripple.remove(), 600);
             });
         });
 
-        // Add CSS for ripple animation
         const style = document.createElement('style');
         style.textContent = `
-                @keyframes ripple {
-                    to {
-                        transform: scale(4);
-                        opacity: 0;
-                    }
-                }
-            `;
+            @keyframes ripple {
+                to { transform: scale(4); opacity: 0; }
+            }
+        `;
         document.head.appendChild(style);
     });
-
-    // Logout function
-    function logout() {
-        if (confirm('Are you sure you want to logout? 🤔')) {
-            // Add logout animation
-            document.body.style.transition = 'opacity 0.5s ease-out';
-            document.body.style.opacity = '0';
-
-            setTimeout(() => {
-                // Redirect to logout servlet or login page
-                window.location.href = 'logout'; // Change this to your logout URL
-            }, 500);
-        }
-    }
 </script>
 </body>
 </html>
