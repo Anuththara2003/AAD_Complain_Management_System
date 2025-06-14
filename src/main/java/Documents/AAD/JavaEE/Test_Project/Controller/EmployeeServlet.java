@@ -54,7 +54,6 @@ public class EmployeeServlet extends HttpServlet {
                 employeeModel.setTitle(title);
                 employeeModel.setDescription(description);
                 employeeModel.setUser_id(userId);
-
                 int result = employeeDao.updateComplaint(employeeModel);
                 if (result > 0) {
                     req.setAttribute("message", "Complaint updated successfully");
