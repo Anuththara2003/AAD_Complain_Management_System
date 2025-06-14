@@ -64,6 +64,7 @@ public class EmployeeDao {
                     model.setStatus(rs.getString("status"));
                     model.setCreated_at(rs.getString("created_at"));
                     model.setUpdated_at(rs.getString("updated_at"));
+                    model.setRemark(rs.getString("remark"));
                     list.add(model);
                 }
             }

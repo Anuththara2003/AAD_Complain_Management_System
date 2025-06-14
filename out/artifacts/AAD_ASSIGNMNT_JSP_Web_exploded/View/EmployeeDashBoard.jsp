@@ -1,5 +1,6 @@
 <%@ page import="Documents.AAD.JavaEE.Test_Project.Model.EmployeeModel" %>
 <%@ page import="java.util.List" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -494,6 +495,7 @@
                 <th>Title</th>
                 <th>Description</th>
                 <th>Status</th>
+                <th>Remarks</th>
                 <th>Created</th>
                 <th>Updated</th>
                 <th>Action</th>
@@ -511,6 +513,7 @@
                 <td><%= complaint.getTitle() %></td>
                 <td><%= complaint.getDescription() %></td>
                 <td><%= complaint.getStatus() != null ? complaint.getStatus() : "Pending" %></td>
+                <td><%= complaint.getRemark() %></td>
                 <td><%= complaint.getCreated_at() != null ? complaint.getCreated_at() : "--" %></td>
                 <td><%= complaint.getUpdated_at() != null ? complaint.getUpdated_at() : "--" %></td>
                 <td>

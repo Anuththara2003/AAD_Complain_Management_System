@@ -42,7 +42,8 @@ public class SignInServlet extends HttpServlet {
                     request.getRequestDispatcher("View/AdminDashBoard.jsp?success=true").forward(request,response);
                 } else if ("Employee".equalsIgnoreCase(role)) {
 //                    response.sendRedirect("employeeDashboard.jsp");
-                    request.getRequestDispatcher("View/EmployeeDashBoard.jsp?success=true").forward(request,response);
+//                    request.getRequestDispatcher("View/EmployeeDashBoard.jsp?success=true").forward(request,response);
+                    request.getRequestDispatcher("employee").forward(request,response);
                 } else {
 
 //                    response.sendRedirect("signin.jsp?error=true");

@@ -8,8 +8,17 @@ public class EmployeeModel {
     private String status;
     private String created_at;
     private String updated_at;
+    private String remark;
 
     public EmployeeModel() {
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public int getComplaint_id() {
