@@ -69,7 +69,6 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("pakyooooooooooooooooooooooooo");
         try {
             List<AdminModel> complaints = new AdminDao(this.dataSource).getAllComplainsForAdmin();
             System.out.println(complaints.size());

@@ -54,19 +54,36 @@ public class EmployeeServlet extends HttpServlet {
                 employeeModel.setTitle(title);
                 employeeModel.setDescription(description);
                 employeeModel.setUser_id(userId);
-                int result = employeeDao.updateComplaint(employeeModel);
-                if (result > 0) {
-                    req.setAttribute("message", "Complaint updated successfully");
+
+                boolean isPending = employeeDao.checkStatus(complaintId);
+
+                if (isPending) {
+                    req.setAttribute("message", "This complaint already in resolved state.. you can't update");
                 } else {
-                    req.setAttribute("message", "Failed to update complaint");
+                    int result = employeeDao.updateComplaint(employeeModel);
+                    if (result > 0) {
+                        req.setAttribute("message", "Complaint updated successfully");
+                    } else {
+                        req.setAttribute("message", "Failed to update complaint");
+                    }
                 }
+
+
             } else if ("delete".equals(action)) {
                 int complaintId = Integer.parseInt(req.getParameter("complaint_id"));
-                int result = employeeDao.deleteComplaint(complaintId);
-                if (result > 0) {
-                    req.setAttribute("message", "Complaint deleted successfully");
+
+                boolean isPending = employeeDao.checkStatus(complaintId);
+
+                if (isPending) {
+                    req.setAttribute("message", "This complaint already in resolved state.. you can't delete");
                 } else {
-                    req.setAttribute("message", "Failed to delete complaint");
+                    int result = employeeDao.deleteComplaint(complaintId);
+
+                    if (result > 0) {
+                        req.setAttribute("message", "Complaint deleted successfully");
+                    } else {
+                        req.setAttribute("message", "Failed to delete complaint");
+                    }
                 }
             }
 

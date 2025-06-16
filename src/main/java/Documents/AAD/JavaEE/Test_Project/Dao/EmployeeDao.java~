@@ -84,6 +84,8 @@ public class EmployeeDao {
             preparedStatement.setInt(1, complaintId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
 
+                System.out.println("Status: " + resultSet.getString("status"));
+
                 if (resultSet.next()) {
                     String status = resultSet.getString("status");
                     return status.equals("RESOLVED");
