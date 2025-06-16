@@ -14,6 +14,7 @@
 <head>
     <title>Admin Dashboard - Complaint Management System</title>
     <style>
+
         * {
             margin: 0;
             padding: 0;
