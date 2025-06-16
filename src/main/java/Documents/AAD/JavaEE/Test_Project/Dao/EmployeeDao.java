@@ -20,7 +20,9 @@ public class EmployeeDao {
     public int addComplain(EmployeeModel employeeModel) throws SQLException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
+
                      "INSERT INTO complaints (title, description, user_id) VALUES (?, ?, ?)")) {
+
             preparedStatement.setString(1, employeeModel.getTitle());
             preparedStatement.setString(2, employeeModel.getDescription());
             preparedStatement.setInt(3, employeeModel.getUser_id());

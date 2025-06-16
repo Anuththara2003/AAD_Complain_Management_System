@@ -508,6 +508,7 @@
 </div>
 
 <div class="container">
+    <form method="post" action="admin" id="complaintForm">
     <div class="header-section">
         <h1>🛡️ Admin Dashboard</h1>
         <div class="admin-badge">
@@ -533,7 +534,7 @@
             <div class="stat-label">✅ Resolved</div>
         </div>
     </div>
-
+    </form>
     <div class="table-container">
         <table>
             <thead>
@@ -551,14 +552,14 @@
             </thead>
             <tbody>
             <tr>
-                <td><strong>001</strong></td>
+<%--                <td><strong>001</strong></td>--%>
                 <td>
-                    <div style="font-weight: 600; color: #1e3c72;">kamal123</div>
+<%--                    <div style="font-weight: 600; color: #1e3c72;">kamal123</div>--%>
                 </td>
                 <td>
-                    <div style="font-weight: 500;">🔐 Login Issue</div>
+<%--                    <div style="font-weight: 500;">🔐 Login Issue</div>--%>
                 </td>
-                <td>User cannot log into the system due to authentication errors.</td>
+<%--                <td>User cannot log into the system due to authentication errors.</td>--%>
                 <td>
                     <select class="status-select">
                         <option value="PENDING" selected>⏳ Pending</option>
@@ -566,10 +567,10 @@
                         <option value="RESOLVED">✅ Resolved</option>
                     </select>
                 </td>
-                <td>2025-06-10</td>
-                <td>2025-06-12</td>
+<%--                <td>2025-06-10</td>--%>
+<%--                <td>2025-06-12</td>--%>
                 <td>
-                    <textarea placeholder="Add your remarks here...">Checking user credentials and database connectivity...</textarea>
+<%--                    <textarea placeholder="Add your remarks here...">Checking user credentials and database connectivity...</textarea>--%>
                 </td>
                 <td>
                     <div class="action-buttons">
@@ -584,14 +585,14 @@
             </tr>
 
             <tr>
-                <td><strong>002</strong></td>
+<%--                <td><strong>002</strong></td>--%>
                 <td>
-                    <div style="font-weight: 600; color: #1e3c72;">sachini89</div>
+<%--                    <div style="font-weight: 600; color: #1e3c72;">sachini89</div>--%>
                 </td>
                 <td>
-                    <div style="font-weight: 500;">💥 System Crash</div>
+<%--                    <div style="font-weight: 500;">💥 System Crash</div>--%>
                 </td>
-                <td>Application crashes when submitting forms with large attachments.</td>
+<%--                <td>Application crashes when submitting forms with large attachments.</td>--%>
                 <td>
                     <select class="status-select">
                         <option value="PENDING">⏳ Pending</option>
@@ -599,10 +600,10 @@
                         <option value="RESOLVED">✅ Resolved</option>
                     </select>
                 </td>
-                <td>2025-06-11</td>
-                <td>2025-06-13</td>
+<%--                <td>2025-06-11</td>--%>
+<%--                <td>2025-06-13</td>--%>
                 <td>
-                    <textarea placeholder="Add your remarks here...">Developer team assigned. Investigating memory allocation issues...</textarea>
+<%--                    <textarea placeholder="Add your remarks here...">Developer team assigned. Investigating memory allocation issues...</textarea>--%>
                 </td>
                 <td>
                     <div class="action-buttons">
@@ -617,14 +618,13 @@
             </tr>
 
             <tr>
-                <td><strong>003</strong></td>
+<%--                <td><strong>003</strong></td>--%>
                 <td>
-                    <div style="font-weight: 600; color: #1e3c72;">nimal456</div>
+<%--                    <div style="font-weight: 600; color: #1e3c72;">nimal456</div>--%>
                 </td>
                 <td>
-                    <div style="font-weight: 500;">🐌 Slow Performance</div>
+<%--                    <div style="font-weight: 500;">🐌 Slow Performance</div>--%>
                 </td>
-                <td>Dashboard takes too long to load user data and reports.</td>
                 <td>
                     <select class="status-select">
                         <option value="PENDING">⏳ Pending</option>
@@ -632,10 +632,8 @@
                         <option value="RESOLVED" selected>✅ Resolved</option>
                     </select>
                 </td>
-                <td>2025-06-08</td>
-                <td>2025-06-14</td>
+
                 <td>
-                    <textarea placeholder="Add your remarks here...">Database optimization completed. Performance improved by 75%.</textarea>
                 </td>
                 <td>
                     <div class="action-buttons">
@@ -648,8 +646,10 @@
                     </div>
                 </td>
             </tr>
+
             </tbody>
         </table>
+
     </div>
 </div>
 

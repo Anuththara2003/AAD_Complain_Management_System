@@ -39,11 +39,12 @@ public class SignInServlet extends HttpServlet {
 
                 if ("Admin".equalsIgnoreCase(role)) {
 //                    response.sendRedirect("adminDashboard.jsp");
-                    request.getRequestDispatcher("View/AdminDashBoard.jsp?success=true").forward(request,response);
+//                    request.getRequestDispatcher("View/AdminDashBoard.jsp?success=true").forward(request,response);
+                    request.getRequestDispatcher("admin").forward(request,response);
                 } else if ("Employee".equalsIgnoreCase(role)) {
 //                    response.sendRedirect("employeeDashboard.jsp");
 //                    request.getRequestDispatcher("View/EmployeeDashBoard.jsp?success=true").forward(request,response);
-                    request.getRequestDispatcher("employee").forward(request,response);
+                 request.getRequestDispatcher("employee").forward(request,response);
                 } else {
 
 //                    response.sendRedirect("signin.jsp?error=true");
