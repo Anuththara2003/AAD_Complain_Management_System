@@ -25,6 +25,8 @@ public class AdminServlet extends HttpServlet {
 
         AdminDao adminDao = new AdminDao(this.dataSource);
 
+        System.out.println(action);
+
         if ("update".equals(action)) {
             int complaintId = Integer.parseInt(req.getParameter("complaint_id"));
             String title = req.getParameter("title");
@@ -51,7 +53,7 @@ public class AdminServlet extends HttpServlet {
                 req.getSession().setAttribute("msg", "Failed to update complaint");
             }
         } else if ("delete".equals(action)) {
-
+            System.out.println(req.getParameter("complaint_id"));
             int complaintId = Integer.parseInt(req.getParameter("complaint_id"));
             int result = adminDao.deleteComplaint(complaintId);
             if (result > 0) {

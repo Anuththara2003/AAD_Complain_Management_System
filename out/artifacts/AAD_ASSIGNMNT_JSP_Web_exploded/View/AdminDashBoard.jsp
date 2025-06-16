@@ -1,10 +1,18 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html lang="en">
+<%@ page import="java.util.*" %>
+<%@ page import="Documents.AAD.JavaEE.Test_Project.Dao.AdminDao" %>
+<%@ page import="Documents.AAD.JavaEE.Test_Project.Model.AdminModel" %>
+<%@ page import="jakarta.annotation.Resource" %>
+<%@ page import="javax.sql.DataSource" %>
+<%@ page import="javax.naming.InitialContext" %>
+<%@ page import="javax.xml.transform.Result" %>
+<%@ page import="java.sql.ResultSet" %>
+<%@ page import="Documents.AAD.JavaEE.Test_Project.Model.AdminModel" %>
+
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Complaints Management</title>
+    <title>Admin Dashboard - Complaint Management System</title>
     <style>
         * {
             margin: 0;
@@ -14,341 +22,419 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.15) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .floating-shape {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            animation: float 8s ease-in-out infinite;
-        }
-
-        .floating-shape:nth-child(1) {
-            width: 100px;
-            height: 100px;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .floating-shape:nth-child(2) {
-            width: 150px;
-            height: 150px;
-            top: 60%;
-            right: 10%;
-            animation-delay: 3s;
-        }
-
-        .floating-shape:nth-child(3) {
-            width: 80px;
-            height: 80px;
-            top: 30%;
-            left: 70%;
-            animation-delay: 6s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
-            50% { transform: translateY(-30px) rotate(180deg); opacity: 1; }
+            padding: 0;
+            margin: 0;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: slideInUp 1s ease-out;
-            position: relative;
-            z-index: 2;
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(80px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        h1 {
-            background: linear-gradient(45deg, #1e3c72, #2a5298);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 3rem;
-            font-weight: 700;
-            position: relative;
-            animation: titleGlow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes titleGlow {
-            from { filter: drop-shadow(0 0 15px rgba(30, 60, 114, 0.3)); }
-            to { filter: drop-shadow(0 0 30px rgba(42, 82, 152, 0.6)); }
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(45deg, #1e3c72, #2a5298);
-            border-radius: 2px;
-            animation: lineExpand 1.5s ease-out 0.5s both;
+            margin: 0;
+            background: rgba(245, 247, 250, 0.95);
+            border-radius: 0;
+            box-shadow: none;
+            overflow: hidden;
+            min-height: 100vh;
         }
 
-        @keyframes lineExpand {
-            from { width: 0; }
-            to { width: 100%; }
+        /*.header {*/
+        /*    background: linear-gradient(135deg, #8e44ad, #e74c3c);*/
+        /*    color: white;*/
+        /*    padding: 30px;*/
+        /*    text-align: center;*/
+        /*    position: relative;*/
+        /*    overflow: hidden;*/
+        /*}*/
+
+        .header {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            color: white;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.2em;
         }
 
         .admin-badge {
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
-            animation: badgePulse 2s ease-in-out infinite;
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
         }
 
-        @keyframes badgePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .main-content {
+            padding: 40px;
         }
 
-        .stats-grid {
+        .stats-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
             margin-bottom: 40px;
         }
 
         .stat-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-            padding: 20px;
-            border-radius: 15px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 20px;
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: cardSlideIn 0.8s ease-out;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
-        @keyframes cardSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3c72e7, #1283f3, #27aeaa);
         }
 
         .stat-number {
-            font-size: 2.5rem;
+            font-size: 3em;
             font-weight: bold;
-            color: #1e3c72;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .stat-label {
-            color: #666;
-            font-weight: 500;
+            color: #7f8c8d;
+            font-size: 1.1em;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 0.9rem;
         }
 
-        .table-container {
-            background: rgba(255, 255, 255, 0.9);
+        .pending { color: #f39c12; }
+        .resolved { color: #27ae60; }
+        .in-progress { color: #3498db; }
+        .total { color: #8e44ad; }
+
+        .form-section {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            animation: tableSlideIn 1.2s ease-out 0.3s both;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 2px solid #e8ecf3;
+            box-shadow: 0 15px 35px rgba(142, 68, 173, 0.1);
+            position: relative;
             overflow: hidden;
         }
 
-        @keyframes tableSlideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-80px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8e44ad, #3ca5e7, #1230f3);
+        }
+
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 1.1em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #8e44ad;
+            box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #7f8c8d, #6c7b7d);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
+        }
+
+        .table-section {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-section h2 {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            padding: 25px 30px;
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            padding: 25px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
         }
 
         th {
-            background: linear-gradient(45deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 20px 15px;
-            text-align: center;
+            background: #f8f9fa;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            font-size: 14px;
-        }
-
-        th::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
-        }
-
-        td {
-            padding: 18px 15px;
-            text-align: center;
-            background: white;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            position: relative;
-        }
-
-        tr {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #2c3e50;
+            font-size: 1.1em;
         }
 
         tr:hover {
-            background: linear-gradient(45deg, rgba(30, 60, 114, 0.05), rgba(42, 82, 152, 0.05));
-            transform: scale(1.02);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        tr:hover td {
-            background: transparent;
-        }
-
-        select, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid transparent;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: inherit;
-            font-size: 14px;
-        }
-
-        select:focus, textarea:focus {
-            outline: none;
-            border-color: #1e3c72;
-            background: white;
-            box-shadow: 0 0 15px rgba(30, 60, 114, 0.2);
-            transform: scale(1.02);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 60px;
-            max-height: 120px;
-        }
-
-        .status-select {
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-select option[value="PENDING"] {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .status-select option[value="IN_PROGRESS"] {
-            background-color: #cce5ff;
-            color: #004085;
-        }
-
-        .status-select option[value="RESOLVED"] {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
+            background-color: #f8f9fa;
             cursor: pointer;
+        }
+
+        .status {
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 0.85em;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-resolved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-in_progress {
+            background: #cde3f8;
+            color: #004085;
+            border: 1px solid #99ccff;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+            font-style: italic;
+            font-size: 1.2em;
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #fff5f5, #f0f8ff);
+            border: 2px solid #8e44ad;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .user-info {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #8e44ad;
+            margin-bottom: 10px;
+        }
+
+        .filter-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .filter-group input::placeholder {
+            color: #a0aec0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             position: relative;
             overflow: hidden;
-            font-size: 12px;
-            min-width: 80px;
         }
 
         .btn::before {
@@ -366,477 +452,333 @@
             left: 100%;
         }
 
-        .btn-update {
-            background: linear-gradient(45deg, #28a745, #20c997);
+        .search-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-update:hover {
+        .search-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
-        .btn-delete {
-            background: linear-gradient(45deg, #dc3545, #c82333);
-            color: white;
-            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
-        }
-
-        .btn-delete:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
-        }
-
-        .btn:active {
+        .search-btn:active {
             transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
         }
 
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
+        .clear-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .clear-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .clear-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-icon {
+            font-size: 16px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 14px;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .status-pending {
-            background: linear-gradient(45deg, #ffc107, #ffca2c);
-            color: #856404;
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-50%) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
 
-        .status-progress {
-            background: linear-gradient(45deg, #007bff, #0056b3);
-            color: white;
-        }
-
-        .status-resolved {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(30, 60, 114, 0.3);
-            border-radius: 50%;
-            border-top-color: #1e3c72;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .container {
-                margin: 20px;
-                padding: 20px;
-            }
-
-            table {
-                font-size: 12px;
-            }
-
-            th, td {
-                padding: 12px 8px;
-            }
+        .logout-btn:active {
+            transform: translateY(-50%) translateY(0px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
+            .stats-section {
+                grid-template-columns: 1fr;
             }
 
-            .header-section {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
+            .form-row {
+                grid-template-columns: 1fr;
             }
 
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .main-content {
+                padding: 20px;
             }
 
-            table {
-                font-size: 11px;
-            }
-
-            th, td {
-                padding: 8px 4px;
-            }
-
-            .action-buttons {
+            .button-group {
                 flex-direction: column;
             }
 
             .btn {
-                font-size: 10px;
-                padding: 8px 16px;
+                width: 100%;
             }
-        }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+            .header h1 {
+                font-size: 2em;
+            }
 
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
+            .admin-badge {
+                position: static;
+                margin-top: 10px;
+                display: inline-block;
+            }
 
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #1e3c72, #2a5298);
-            border-radius: 10px;
-        }
+            table {
+                font-size: 0.9em;
+            }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(45deg, #2a5298, #1e3c72);
+            th, td {
+                padding: 10px 8px;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 <body>
-<div class="floating-elements">
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-</div>
-
 <div class="container">
-    <form method="post" action="admin" id="complaintForm">
-    <div class="header-section">
+
+    <%
+        String msg = (String) session.getAttribute("msg");
+        if (msg != null) {
+    %>
+    <script>
+        alert("<%= msg %>");
+    </script>
+    <%
+            session.removeAttribute("msg");
+        }
+    %>
+
+    <!-- Header Section -->
+    <div class="header">
         <h1>🛡️ Admin Dashboard</h1>
-        <div class="admin-badge">
-            👨‍💼 Administrator
-        </div>
+        <p>Complaint Management System - Administrative Control</p>
+        <form action="${pageContext.request.contextPath}/signin" method="post">
+            <button class="logout-btn" type="submit">
+                <span class="logout-icon">🚪</span>
+                Logout
+            </button>
+        </form>
+
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">24</div>
-            <div class="stat-label">📋 Total Complaints</div>
+    <div class="main-content">
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+            <div class="user-info">
+                Welcome, <%= session.getAttribute("username") != null ? session.getAttribute("username") : "Administrator" %>
+            </div>
+            <h3>👋 Welcome to Admin Dashboard!</h3>
+            <p>Manage all complaints, update statuses, and oversee the complaint resolution process.</p>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">8</div>
-            <div class="stat-label">⏳ Pending</div>
+
+        <!-- Statistics Section -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-number total">24</div>
+                <div class="stat-label">Total Complaints</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number pending">8</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number in-progress">6</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number resolved">10</div>
+                <div class="stat-label">Resolved</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">12</div>
-            <div class="stat-label">🔄 In Progress</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">4</div>
-            <div class="stat-label">✅ Resolved</div>
-        </div>
-    </div>
-    </form>
-    <div class="table-container">
-        <table>
-            <thead>
-            <tr>
-                <th>🆔 ID</th>
-                <th>👤 User</th>
-                <th>📝 Title</th>
-                <th>📄 Description</th>
-                <th>🏷️ Status</th>
-                <th>📅 Created</th>
-                <th>🔄 Updated</th>
-                <th>💬 Remarks</th>
-                <th>⚡ Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-<%--                <td><strong>001</strong></td>--%>
-                <td>
-<%--                    <div style="font-weight: 600; color: #1e3c72;">kamal123</div>--%>
-                </td>
-                <td>
-<%--                    <div style="font-weight: 500;">🔐 Login Issue</div>--%>
-                </td>
-<%--                <td>User cannot log into the system due to authentication errors.</td>--%>
-                <td>
-                    <select class="status-select">
-                        <option value="PENDING" selected>⏳ Pending</option>
-                        <option value="IN_PROGRESS">🔄 In Progress</option>
-                        <option value="RESOLVED">✅ Resolved</option>
-                    </select>
-                </td>
-<%--                <td>2025-06-10</td>--%>
-<%--                <td>2025-06-12</td>--%>
-                <td>
-<%--                    <textarea placeholder="Add your remarks here...">Checking user credentials and database connectivity...</textarea>--%>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-update" onclick="updateComplaint(1)">
-                            ✏️ Update
-                        </button>
-                        <button class="btn btn-delete" onclick="deleteComplaint(1)">
-                            🗑️ Delete
-                        </button>
+
+        <!-- Complaint Management Form Section -->
+        <div class="form-section">
+            <h2>🔧 Manage Complaint</h2>
+            <form action="${pageContext.request.contextPath}/admin" method="post">
+                <input type="hidden" name="complaint_id" id="complaint_id" value="">
+                <input type="hidden" name="created_at" id="created_at" value="">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="user_id">👤 User ID:</label>
+                        <input type="text" id="user_id" name="user_id" placeholder="User ID..." readonly>
                     </div>
-                </td>
-            </tr>
-
-            <tr>
-<%--                <td><strong>002</strong></td>--%>
-                <td>
-<%--                    <div style="font-weight: 600; color: #1e3c72;">sachini89</div>--%>
-                </td>
-                <td>
-<%--                    <div style="font-weight: 500;">💥 System Crash</div>--%>
-                </td>
-<%--                <td>Application crashes when submitting forms with large attachments.</td>--%>
-                <td>
-                    <select class="status-select">
-                        <option value="PENDING">⏳ Pending</option>
-                        <option value="IN_PROGRESS" selected>🔄 In Progress</option>
-                        <option value="RESOLVED">✅ Resolved</option>
-                    </select>
-                </td>
-<%--                <td>2025-06-11</td>--%>
-<%--                <td>2025-06-13</td>--%>
-                <td>
-<%--                    <textarea placeholder="Add your remarks here...">Developer team assigned. Investigating memory allocation issues...</textarea>--%>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-update" onclick="updateComplaint(2)">
-                            ✏️ Update
-                        </button>
-                        <button class="btn btn-delete" onclick="deleteComplaint(2)">
-                            🗑️ Delete
-                        </button>
+                    <div class="form-group">
+                        <label for="status">📊 Status:</label>
+                        <select id="status" name="status" required>
+                            <option value="PENDING">Pending</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="RESOLVED">Resolved</option>
+                        </select>
                     </div>
-                </td>
-            </tr>
+                </div>
 
-            <tr>
-<%--                <td><strong>003</strong></td>--%>
-                <td>
-<%--                    <div style="font-weight: 600; color: #1e3c72;">nimal456</div>--%>
-                </td>
-                <td>
-<%--                    <div style="font-weight: 500;">🐌 Slow Performance</div>--%>
-                </td>
-                <td>
-                    <select class="status-select">
-                        <option value="PENDING">⏳ Pending</option>
-                        <option value="IN_PROGRESS">🔄 In Progress</option>
-                        <option value="RESOLVED" selected>✅ Resolved</option>
-                    </select>
-                </td>
+                <div class="form-group">
+                    <label for="title">📋 Complaint Title:</label>
+                    <input type="text" id="title" name="title" placeholder="Complaint title..." readonly>
+                </div>
 
-                <td>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-update" onclick="updateComplaint(3)">
-                            ✏️ Update
-                        </button>
-                        <button class="btn btn-delete" onclick="deleteComplaint(3)">
-                            🗑️ Delete
-                        </button>
-                    </div>
-                </td>
-            </tr>
+                <div class="form-group">
+                    <label for="description">📄 Complaint Description:</label>
+                    <textarea id="description" name="description" placeholder="Complaint description..." readonly></textarea>
+                </div>
 
-            </tbody>
-        </table>
+                <div class="form-group">
+                    <label for="remark">💬 Admin Remark:</label>
+                    <textarea id="remark" name="remark" placeholder="Add your remarks here..." required></textarea>
+                </div>
 
+                <div class="button-group">
+                    <button type="submit" name="action" value="update" id="updateBtn" class="btn btn-success">
+                        ✅ Update Status
+                    </button>
+                    <button type="submit" name="action" value="delete" id="deleteBtn" class="btn btn-danger">
+                        🗑️ Delete Complaint
+                    </button>
+                    <button type="button" onclick="clearForm()" class="btn btn-secondary">
+                        🧹 Clear Form
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-group">
+                <label for="statusFilter">🔍 Filter by Status:</label>
+                <select id="statusFilter" name="statusFilter">
+                    <option value="PENDING">Pending</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="RESOLVED">Resolved</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button class="btn search-btn" value="search" name="action">
+                    <span class="btn-icon">🔍</span>
+                    Search
+                </button>
+
+                <button class="btn clear-btn" value="clear" name="action">
+                    <span class="btn-icon">🗑️</span>
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- All Complaints Table Section -->
+        <div class="table-section">
+            <h2>📊 All System Complaints</h2>
+            <div class="table-container">
+                <table id="complaintsTable">
+                    <thead>
+                    <tr>
+                        <th>🆔 ID</th>
+                        <th>👤 User ID</th>
+                        <th>📋 Title</th>
+                        <th>📄 Description</th>
+                        <th>💬 Remark</th>
+                        <th>📊 Status</th>
+                        <th>📅 Created At</th>
+                        <th>🔄 Updated At</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <%
+                        List<AdminModel> complaintList = (List<AdminModel>) request.getAttribute("complaints");
+                        if (complaintList != null && !complaintList.isEmpty()) {
+                            for (AdminModel c : complaintList) {
+                    %>
+                    <tr onclick="selectComplaint('<%= c.getComplaint_id() %>', '<%= c.getUser_id() %>', '<%= c.getTitle() %>', '<%= c.getDescription() %>', '<%= c.getRemark() %>', '<%= c.getStatus() %>', '<%= c.getCreated_at() %>')">
+                        <td><%= c.getComplaint_id() %></td>
+                        <td><%= c.getUser_id() %></td>
+                        <td><%= c.getTitle() %></td>
+                        <td><%= c.getDescription() %></td>
+                        <td><%= c.getRemark() != null ? c.getRemark() : "No remark" %></td>
+                        <td>
+                            <span class="status status-<%= c.getStatus().toLowerCase().replace(" ", "-") %>">
+                                <%= c.getStatus() %>
+                            </span>
+                        </td>
+                        <td><%= c.getCreated_at() %></td>
+                        <td><%= c.getUpdated_at() %></td>
+                    </tr>
+                    <%
+                        }
+                    } else {
+                    %>
+                    <tr><td colspan="8" class="no-data">📭 No complaints found in the system.</td></tr>
+                    <%
+                        }
+                    %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add ripple effect to buttons
-        const buttons = document.querySelectorAll('.btn');
-        buttons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                const ripple = document.createElement('span');
-                const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-
-                ripple.style.cssText = `
-                        position: absolute;
-                        width: ${size}px;
-                        height: ${size}px;
-                        left: ${x}px;
-                        top: ${y}px;
-                        background: rgba(255, 255, 255, 0.6);
-                        border-radius: 50%;
-                        transform: scale(0);
-                        animation: ripple 0.6s linear;
-                        pointer-events: none;
-                        z-index: 1000;
-                    `;
-
-                this.appendChild(ripple);
-
-                setTimeout(() => {
-                    ripple.remove();
-                }, 600);
-            });
-        });
-
-        // Add CSS for ripple animation
-        const style = document.createElement('style');
-        style.textContent = `
-                @keyframes ripple {
-                    to {
-                        transform: scale(4);
-                        opacity: 0;
-                    }
-                }
-            `;
-        document.head.appendChild(style);
-
-        // Animate table rows on scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = 'slideInFromLeft 0.6s ease-out';
-                }
-            });
-        });
-
-        document.querySelectorAll('tbody tr').forEach(row => {
-            observer.observe(row);
-        });
-
-        // Add slideInFromLeft animation
-        const animationStyle = document.createElement('style');
-        animationStyle.textContent = `
-                @keyframes slideInFromLeft {
-                    from {
-                        opacity: 0;
-                        transform: translateX(-30px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateX(0);
-                    }
-                }
-            `;
-        document.head.appendChild(animationStyle);
-    });
-
-    function updateComplaint(id) {
-        // Add loading state
-        const button = event.target;
-        const originalText = button.innerHTML;
-        button.innerHTML = '<div class="loading-spinner"></div>Updating...';
-        button.disabled = true;
-
-        // Simulate API call
-        setTimeout(() => {
-            button.innerHTML = originalText;
-            button.disabled = false;
-
-            // Show success message
-            showNotification('✅ Complaint updated successfully!', 'success');
-        }, 1500);
-
-        // Here you would typically make an AJAX call to your servlet
-        console.log('Updating complaint ID:', id);
+    function clearForm() {
+        document.getElementById('complaint_id').value = '';
+        document.getElementById('user_id').value = '';
+        document.getElementById('title').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('remark').value = '';
+        document.getElementById('status').value = '';
+        document.getElementById('updateBtn').disabled = false;
+        document.getElementById('deleteBtn').disabled = false;
     }
 
-    function deleteComplaint(id) {
-        if (confirm('🤔 Are you sure you want to delete this complaint? This action cannot be undone.')) {
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.innerHTML = '<div class="loading-spinner"></div>Deleting...';
-            button.disabled = true;
+    function selectComplaint(id, userId, title, description, remark, status, created_at) {
+        document.getElementById('complaint_id').value = id;
+        document.getElementById('user_id').value = userId;
+        document.getElementById('title').value = title;
+        document.getElementById('description').value = description;
+        document.getElementById('remark').value = remark || '';
+        document.getElementById('status').value = status;
+        document.getElementById('created_at').value = created_at;
+        document.getElementById('updateBtn').disabled = false;
+        document.getElementById('deleteBtn').disabled = false;
 
-            // Simulate API call
-            setTimeout(() => {
-                // Remove the row with animation
-                const row = button.closest('tr');
-                row.style.animation = 'slideOutRight 0.5s ease-in';
-
-                setTimeout(() => {
-                    row.remove();
-                    showNotification('🗑️ Complaint deleted successfully!', 'success');
-                }, 500);
-            }, 1000);
-
-            // Here you would typically make an AJAX call to your servlet
-            console.log('Deleting complaint ID:', id);
-        }
+        // Scroll to form
+        document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function showNotification(message, type) {
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type == 'success' ? 'linear-gradient(45deg, #28a745, #20c997)' : 'linear-gradient(45deg, #dc3545, #c82333)'};
-                color: white;
-                padding: 15px 25px;
-                border-radius: 10px;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-                z-index: 10000;
-                font-weight: 600;
-                animation: slideInRight 0.5s ease-out;
-            `;
-        notification.textContent = message;
 
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.5s ease-in';
-            setTimeout(() => {
-                notification.remove();
-            }, 500);
-        }, 3000);
-    }
-
-    // Add slide animations for notifications
-    const notificationStyle = document.createElement('style');
-    notificationStyle.textContent = `
-            @keyframes slideInRight {
-                from {
-                    opacity: 0;
-                    transform: translateX(100px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-            }
-
-            @keyframes slideOutRight {
-                from {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-                to {
-                    opacity: 0;
-                    transform: translateX(100px);
-                }
-            }
-
-            @keyframes slideOutRight {
-                from {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-                to {
-                    opacity: 0;
-                    transform: translateX(100px);
-                }
-            }
-        `;
-    document.head.appendChild(notificationStyle);
 </script>
 </body>
 </html>
